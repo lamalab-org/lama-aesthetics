@@ -32,6 +32,8 @@ version = "0.0.1"
 description = "Plotting styles and helpers by LamaLab"
 authors = [{ name = "lama-aesthetics authors", email = "lamalab@lamalab.org" }]
 dependencies = [
+    "matplotlib",
+    "numpy",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
