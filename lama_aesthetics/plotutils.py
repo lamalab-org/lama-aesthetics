@@ -1,9 +1,21 @@
+from typing import Optional
+
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Optional
 
 
 def range_frame(ax, x, y, pad=0.1):
+    """
+    Set the limits of the axes to include all data points with a padding of
+    `pad` times the range of the data. This is useful to ensure that the data
+    points are not cut off by the axes.
+
+    Args:
+        ax: The axes object.
+        x: The x-coordinates of the data points.
+        y: The y-coordinates of the data points.
+        pad: The padding factor.
+    """
     y_min, y_max = y.min(), y.max()
     x_min, x_max = x.min(), x.max()
 
@@ -17,14 +29,20 @@ def range_frame(ax, x, y, pad=0.1):
     ax.spines["left"].set_bounds(y_min, y_max)
 
 
-def ylabel_top(
-    string: str, ax: Optional[plt.Axes] = None, x_pad: float = 0.01, y_pad: float = 0.02
-) -> None:
-    # Rotate the ylabel (such that you can read it comfortably) and place it
-    # above the top ytick. This requires some logic, so it cannot be
-    # incorporated in `style`. See
-    # <https://stackoverflow.com/a/27919217/353337> on how to get the axes
-    # coordinates of the top ytick.
+def ylabel_top(string: str, ax: Optional[plt.Axes] = None, x_pad: float = 0.01, y_pad: float = 0.02) -> None:
+    """
+    Rotate the ylabel (such that you can read it comfortably) and place it
+    above the top ytick. This requires some logic, so it cannot be
+    incorporated in `style`. See
+    <https://stackoverflow.com/a/27919217/353337> on how to get the axes
+    coordinates of the top ytick.
+
+    Args:
+        string: The string to be displayed as the ylabel.
+        ax: The axes object.
+        x_pad: The x-padding in axes coordinates.
+        y_pad: The y-padding in axes coordinates.
+    """
     if ax is None:
         ax = plt.gca()
 
@@ -66,14 +84,24 @@ def ylabel_top(
 
 
 def add_identity(axes, *line_args, **line_kwargs):
-    identity, = axes.plot([], [], *line_args, **line_kwargs)
+    """
+    Add a 1:1 line to the axes. This is useful to compare the data to a
+
+    Args:
+        axes: The axes object.
+        line_args: The positional arguments for the line.
+        line_kwargs: The keyword arguments for the line.
+    """
+    (identity,) = axes.plot([], [], *line_args, **line_kwargs)
+
     def callback(axes):
         low_x, high_x = axes.get_xlim()
         low_y, high_y = axes.get_ylim()
         low = max(low_x, low_y)
         high = min(high_x, high_y)
         identity.set_data([low, high], [low, high])
+
     callback(axes)
-    axes.callbacks.connect('xlim_changed', callback)
-    axes.callbacks.connect('ylim_changed', callback)
+    axes.callbacks.connect("xlim_changed", callback)
+    axes.callbacks.connect("ylim_changed", callback)
     return axes
