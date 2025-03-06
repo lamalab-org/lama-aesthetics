@@ -1,1 +1,1 @@
-from .aesthetics import get_style, STYLES
+from .aesthetics import STYLES, get_style
