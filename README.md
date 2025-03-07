@@ -12,14 +12,6 @@ Plotting styles and helpers by LamaLab
 
 ## Installation
 
-### Option 1: Install from GitHub with pip
-
-```bash
-pip install git+https://github.com/lamalab-org/lama-aesthetics.git
-```
-
-### Option 2: Install from GitHub with pip
-
 ```bash
 # Clone the repository
 git clone https://github.com/lamalab-org/lama-aesthetics.git
