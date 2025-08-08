@@ -39,6 +39,9 @@ requires-python = ">=3.10"
 readme = "README.md"
 license = { text = "MIT license" }
 
+[tool.setuptools.package-data]
+lama_aesthetics = ["styles/*.mplstyle"]
+
 [project.optional-dependencies]
 optional_dependencies = []
 all = ["lama-aesthetics[dev,docs]"]
