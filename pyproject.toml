@@ -37,6 +37,7 @@ authors = [{ name = "lama-aesthetics authors", email = "lamalab@lamalab.org" }]
 dependencies = [
     "matplotlib",
     "numpy",
+    "scipy",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
