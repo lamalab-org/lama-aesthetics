@@ -1,12 +1,12 @@
 from lama_aesthetics.aesthetics import (
+    ONE_COL_HEIGHT,
+    ONE_COL_WIDTH,
     STYLES,
+    TWO_COL_HEIGHT,
+    TWO_COL_WIDTH,
     get_style,
-    ONE_COL_WIDTH_INCH,
-    TWO_COL_WIDTH_INCH,
-    ONE_COL_GOLDEN_RATIO_HEIGHT_INCH,
-    TWO_COL_GOLDEN_RATIO_HEIGHT_INCH,
 )
-from lama_aesthetics.plotutils import range_frame, ylabel_top, add_identity
+from lama_aesthetics.plotutils import add_identity, range_frame, ylabel_top
 
 __all__ = [
     "STYLES",
@@ -14,8 +14,8 @@ __all__ = [
     "range_frame",
     "ylabel_top",
     "add_identity",
-    "ONE_COL_WIDTH_INCH",
-    "TWO_COL_WIDTH_INCH",
-    "ONE_COL_GOLDEN_RATIO_HEIGHT_INCH",
-    "TWO_COL_GOLDEN_RATIO_HEIGHT_INCH",
+    "ONE_COL_WIDTH",
+    "TWO_COL_WIDTH",
+    "ONE_COL_HEIGHT",
+    "TWO_COL_HEIGHT",
 ]
