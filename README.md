@@ -57,6 +57,34 @@ The package includes several plotting utilities to enhance your visualizations:
 - **ylabel_top**: Places the y-label at the top of the y-axis.
 - **add_identity**: Adds a diagonal reference line.
 
+### Figure Dimensions
+
+The package provides predefined figure dimension constants based on common journal column widths and the golden ratio:
+
+```python
+from lama_aesthetics import (
+    ONE_COL_WIDTH,
+    TWO_COL_WIDTH,
+    ONE_COL_HEIGHT,
+    TWO_COL_HEIGHT,
+)
+
+# Create a single-column figure with golden ratio proportions
+fig, ax = plt.subplots(figsize=(ONE_COL_WIDTH, ONE_COL_HEIGHT))
+
+# Create a two-column figure with golden ratio proportions
+fig, ax = plt.subplots(figsize=(TWO_COL_WIDTH, TWO_COL_HEIGHT))
+```
+
+Available constants:
+
+- `ONE_COL_WIDTH`: 3 inches (typical single-column width)
+- `TWO_COL_WIDTH`: 7.25 inches (typical two-column width)
+- `ONE_COL_HEIGHT`: Single-column height based on golden ratio
+- `TWO_COL_HEIGHT`: Two-column height based on golden ratio
+
+### Plotting Utilities Examples
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np

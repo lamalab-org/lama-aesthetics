@@ -1,2 +1,2 @@
-include lama_aesthetics/styles/*.mplstyle
+include src/lama_aesthetics/styles/*.mplstyle
 

@@ -14,13 +14,16 @@ lint.select = ["E", "F", "I"]
 [tool.ruff.lint.isort]
 known-first-party = ["lama_aesthetics"]
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+
 [tool.pytest.ini_options]
 markers = ["requires_api_key"]
 
 
 [tool.codeflash]
 # All paths are relative to this pyproject.toml's directory.
-module-root = "lama_aesthetics"
+module-root = "src/lama_aesthetics"
 tests-root = "tests"
 test-framework = "pytest"
 ignore-paths = []
@@ -34,6 +37,7 @@ authors = [{ name = "lama-aesthetics authors", email = "lamalab@lamalab.org" }]
 dependencies = [
     "matplotlib",
     "numpy",
+    "scipy",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -68,6 +72,6 @@ search = 'version = "{current_version}"'
 replace = 'version = "{new_version}"'
 
 [[tool.bumpversion.files]]
-filename = "lama-aesthetics/__init__.py"
+filename = "src/lama_aesthetics/__init__.py"
 search = '__version__ = "{current_version}"'
 replace = '__version__ = "{new_version}"'

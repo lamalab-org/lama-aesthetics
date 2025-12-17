@@ -1,11 +1,18 @@
 import importlib.resources
 
 import matplotlib.pyplot as plt
+from scipy.constants import golden
 
 STYLES = {
     "main": "lamalab.mplstyle",
     "presentation": "presentation.mplstyle",
 }
+
+# Figure dimensions
+ONE_COL_WIDTH = 3
+TWO_COL_WIDTH = 7.25
+ONE_COL_HEIGHT = ONE_COL_WIDTH / golden
+TWO_COL_HEIGHT = TWO_COL_WIDTH / golden
 
 
 def get_style(style_name: str) -> None:
