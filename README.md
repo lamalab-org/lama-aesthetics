@@ -28,17 +28,18 @@ make install
 
 ### Styles
 
-The library provides two main plotting styles:
+The library provides three main plotting styles:
 
 - **main**: Optimized for publications, reports, and other documents.
-- **presentation**: Features larger fonts and thicker lines for better visibility in presentations
+- **presentation**: Features larger fonts and thicker lines for better visibility in presentations.
+- **dark**: Same as main but with a black background and white text/lines, ideal for dark-themed presentations or interfaces.
 
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
 import lama_aesthetics
 
-lama_aesthetics.get_style("main")  # or la.get_style("presentation")
+lama_aesthetics.get_style("main")  # or lama_aesthetics.get_style("presentation") or lama_aesthetics.get_style("dark")
 ```
 
 <div align="center">

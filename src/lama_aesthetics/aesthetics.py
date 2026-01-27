@@ -6,6 +6,7 @@ from scipy.constants import golden
 STYLES = {
     "main": "lamalab.mplstyle",
     "presentation": "presentation.mplstyle",
+    "dark": "lamalab_dark.mplstyle",
 }
 
 # Figure dimensions
