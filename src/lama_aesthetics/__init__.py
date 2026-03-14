@@ -8,7 +8,7 @@ from lama_aesthetics.aesthetics import (
     get_style,
     register_fonts,
 )
-from lama_aesthetics.plotutils import add_identity, range_frame, ylabel_top
+from lama_aesthetics.plotutils import add_identity, decompose_figure, range_frame, ylabel_top
 
 __all__ = [
     "STYLES",
@@ -18,6 +18,7 @@ __all__ = [
     "range_frame",
     "ylabel_top",
     "add_identity",
+    "decompose_figure",
     "ONE_COL_WIDTH",
     "TWO_COL_WIDTH",
     "ONE_COL_HEIGHT",

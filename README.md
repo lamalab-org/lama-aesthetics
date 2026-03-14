@@ -57,6 +57,7 @@ The package includes several plotting utilities to enhance your visualizations:
 - **range_frame**: Draws a frame around the data range.
 - **ylabel_top**: Places the y-label at the top of the y-axis.
 - **add_identity**: Adds a diagonal reference line.
+- **decompose_figure**: Splits a figure into individual figures, one per labeled artist.
 
 ### Figure Dimensions
 
@@ -120,5 +121,39 @@ plt.show()
 ```
 
 <div align="center"> <img src="docs/static/plotting_functions.png" alt="Helper function examples" width="100%"/> <p><em>Left: Range Frame; Center: Top Y-Label; Right: Identity Line</em></p> </div>
+
+### Decomposing a Figure by Legend Entries
+
+`decompose_figure` takes a figure (or axes) that contains multiple labeled series and returns a list of `(label, figure)` tuples — one separate figure per legend entry.  This is useful when you want to highlight individual series from a combined plot, e.g. to include them separately in a paper or presentation.
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+from lama_aesthetics import decompose_figure, get_style
+
+get_style("main")
+
+# Build a figure with several series
+fig, ax = plt.subplots()
+x = np.linspace(0, 2 * np.pi, 50)
+ax.plot(x, np.sin(x), label="sin(x)")
+ax.plot(x, np.cos(x), label="cos(x)")
+ax.plot(x, np.sin(x) + np.cos(x), label="sin(x)+cos(x)")
+ax.set_xlabel("x")
+ax.set_ylabel("f(x)")
+ax.set_title("Trigonometric Functions")
+ax.legend()
+
+# Split into individual figures — one per labeled series
+parts = decompose_figure(fig)  # also accepts an Axes directly
+
+for label, part_fig in parts:
+    part_fig.savefig(f"{label}.png")
+    plt.close(part_fig)
+```
+
+Each decomposed figure inherits the axis labels, title, limits, and scale of the original.  Pass `show_legend=False` to omit the legend from the individual figures.
+
+Supported artist types: line plots, scatter plots, bar charts, and `fill_between` regions.
 
 Repository initiated with [lamalab-org/cookiecutter-uv](https://github.com/lamalab-org/cookiecutter-uv).
