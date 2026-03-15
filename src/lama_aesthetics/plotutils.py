@@ -8,6 +8,18 @@ from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 
 
+def _get_axis_bounds(values):
+    """Return axis bounds for numeric or categorical values."""
+    arr = np.asarray(values)
+
+    try:
+        numeric_arr = np.asarray(values, dtype=float)
+    except (TypeError, ValueError):
+        return 0, max(len(arr) - 1, 0), False
+
+    return numeric_arr.min(), numeric_arr.max(), True
+
+
 def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None):
     """
     Set the limits of the axes to include all data points with a padding of
@@ -30,11 +42,18 @@ def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None):
     if pad_y is None:
         pad_y = pad
 
-    y_min, y_max = y.min(), y.max()
-    x_min, x_max = x.min(), x.max()
+    y_min, y_max, y_is_numeric = _get_axis_bounds(y)
+    x_min, x_max, x_is_numeric = _get_axis_bounds(x)
 
-    ax.set_ylim(y_min - pad_x * (y_max - y_min), y_max + pad_x * (y_max - y_min))
-    ax.set_xlim(x_min - pad_y * (x_max - x_min), x_max + pad_y * (x_max - x_min))
+    if y_is_numeric:
+        ax.set_ylim(y_min - pad_x * (y_max - y_min), y_max + pad_x * (y_max - y_min))
+    else:
+        ax.set_ylim(y_min, y_max)
+
+    if x_is_numeric:
+        ax.set_xlim(x_min - pad_y * (x_max - x_min), x_max + pad_y * (x_max - x_min))
+    else:
+        ax.set_xlim(x_min, x_max)
 
     ax.spines["left"].set_position(("outward", 10))
     ax.spines["bottom"].set_position(("outward", 10))

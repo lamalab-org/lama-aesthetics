@@ -51,6 +51,40 @@ def test_range_frame_per_axis_pad():
     plt.close(fig)
 
 
+def test_range_frame_non_numeric_x_axis():
+    """Non-numeric x values should use 0..len(x)-1 for the range frame."""
+    fig, ax = plt.subplots()
+    x = ["a", "b", "c", "d"]
+    y = np.array([0, 2, 4, 6])
+
+    ax.plot(x, y)
+    range_frame(ax, x, y, pad=0.1)
+
+    xlim = ax.get_xlim()
+
+    assert xlim == (0.0, float(len(x) - 1))
+    assert ax.spines["bottom"].get_bounds() == (0, len(x) - 1)
+
+    plt.close(fig)
+
+
+def test_range_frame_non_numeric_y_axis():
+    """Non-numeric y values should use 0..len(y)-1 for the range frame."""
+    fig, ax = plt.subplots()
+    x = np.array([0, 1, 2, 3])
+    y = ["low", "mid", "high", "top"]
+
+    ax.plot(x, y)
+    range_frame(ax, x, y, pad=0.1)
+
+    ylim = ax.get_ylim()
+
+    assert ylim == (0.0, float(len(y) - 1))
+    assert ax.spines["left"].get_bounds() == (0, len(y) - 1)
+
+    plt.close(fig)
+
+
 def test_ylabel_top():
     """Test that ylabel_top sets ylabel without errors."""
     fig, ax = plt.subplots()
