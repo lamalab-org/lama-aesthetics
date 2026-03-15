@@ -6,6 +6,7 @@ from matplotlib.collections import PathCollection, PolyCollection
 from matplotlib.container import BarContainer
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
+from matplotlib.ticker import MaxNLocator
 
 
 def _get_axis_bounds(values):
@@ -20,7 +21,47 @@ def _get_axis_bounds(values):
     return numeric_arr.min(), numeric_arr.max(), True
 
 
-def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None):
+def _nice_tick_bounds(data_min, data_max):
+    """Return nice tick positions and spine bounds that strictly bracket the data.
+
+    Uses matplotlib's ``MaxNLocator`` to compute tick positions for the
+    data range and then selects the outermost ticks as spine bounds.
+    The returned bounds are guaranteed to satisfy
+    ``bound_lo <= data_min`` and ``bound_hi >= data_max``, and every
+    tick between the bounds (inclusive) is included.
+
+    Args:
+        data_min: Minimum value present in the data.
+        data_max: Maximum value present in the data.
+
+    Returns:
+        ``(bound_lo, bound_hi, ticks)`` where *ticks* is a 1-D array of
+        the tick positions that fall within ``[bound_lo, bound_hi]``.
+    """
+    if data_min == data_max:
+        # Degenerate case — expand symmetrically so the locator has a range.
+        if data_min == 0:
+            data_min, data_max = -0.5, 0.5
+        else:
+            delta = abs(data_min) * 0.1
+            data_min, data_max = data_min - delta, data_max + delta
+
+    locator = MaxNLocator(nbins="auto", steps=[1, 2, 2.5, 5, 10])
+    ticks = np.asarray(locator.tick_values(data_min, data_max))
+
+    # The locator already returns values that bracket [data_min, data_max],
+    # but enforce the invariant explicitly.
+    bound_lo = float(ticks[ticks <= data_min + 1e-12].max()) if np.any(ticks <= data_min + 1e-12) else float(ticks[0])
+    bound_hi = float(ticks[ticks >= data_max - 1e-12].min()) if np.any(ticks >= data_max - 1e-12) else float(ticks[-1])
+
+    # Keep only ticks within the chosen bounds.
+    mask = (ticks >= bound_lo - 1e-12) & (ticks <= bound_hi + 1e-12)
+    ticks = ticks[mask]
+
+    return bound_lo, bound_hi, ticks
+
+
+def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None, nice=True):
     """
     Set the limits of the axes to include all data points with a padding of
     `pad` times the range of the data. This is useful to ensure that the data
@@ -29,6 +70,14 @@ def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None):
     Per-axis padding can be controlled with ``pad_x`` and ``pad_y``.  When
     either is *None* (the default) the value of ``pad`` is used instead.
 
+    When ``nice`` is *True* (the default) and the axis carries numerical
+    data, the spine bounds are snapped to nice tick positions that bracket
+    the data, so that the axis line starts and ends exactly at tick marks.
+    Tick positions are computed via matplotlib's ``MaxNLocator`` and
+    explicitly set on the axes so there is no drift between ticks and
+    spine endpoints.  The ``pad`` / ``pad_x`` / ``pad_y`` parameters are
+    ignored for any axis that receives nice bounds.
+
     Args:
         ax: The axes object.
         x: The x-coordinates of the data points.
@@ -36,6 +85,8 @@ def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None):
         pad: The default padding factor applied to both axes.
         pad_x: Padding near the x-axis (vertical direction). Overrides ``pad`` when set.
         pad_y: Padding near the y-axis (horizontal direction). Overrides ``pad`` when set.
+        nice: If *True* (default), snap numeric spine bounds to nice tick
+            positions that bracket the data.
     """
     if pad_x is None:
         pad_x = pad
@@ -45,21 +96,39 @@ def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None):
     y_min, y_max, y_is_numeric = _get_axis_bounds(y)
     x_min, x_max, x_is_numeric = _get_axis_bounds(x)
 
+    # --- Y axis ------------------------------------------------------------
     if y_is_numeric:
-        ax.set_ylim(y_min - pad_x * (y_max - y_min), y_max + pad_x * (y_max - y_min))
+        if nice:
+            y_bound_min, y_bound_max, y_ticks = _nice_tick_bounds(y_min, y_max)
+            ax.set_yticks(y_ticks)
+            ax.set_ylim(y_bound_min, y_bound_max)
+        else:
+            y_bound_min = y_min
+            y_bound_max = y_max
+            ax.set_ylim(y_min - pad_x * (y_max - y_min), y_max + pad_x * (y_max - y_min))
     else:
+        y_bound_min, y_bound_max = y_min, y_max
         ax.set_ylim(y_min, y_max)
 
+    # --- X axis ------------------------------------------------------------
     if x_is_numeric:
-        ax.set_xlim(x_min - pad_y * (x_max - x_min), x_max + pad_y * (x_max - x_min))
+        if nice:
+            x_bound_min, x_bound_max, x_ticks = _nice_tick_bounds(x_min, x_max)
+            ax.set_xticks(x_ticks)
+            ax.set_xlim(x_bound_min, x_bound_max)
+        else:
+            x_bound_min = x_min
+            x_bound_max = x_max
+            ax.set_xlim(x_min - pad_y * (x_max - x_min), x_max + pad_y * (x_max - x_min))
     else:
+        x_bound_min, x_bound_max = x_min, x_max
         ax.set_xlim(x_min, x_max)
 
     ax.spines["left"].set_position(("outward", 10))
     ax.spines["bottom"].set_position(("outward", 10))
 
-    ax.spines["bottom"].set_bounds(x_min, x_max)
-    ax.spines["left"].set_bounds(y_min, y_max)
+    ax.spines["bottom"].set_bounds(x_bound_min, x_bound_max)
+    ax.spines["left"].set_bounds(y_bound_min, y_bound_max)
 
 
 def ylabel_top(string: str, ax: Optional[plt.Axes] = None, x_pad: float = 0.01, y_pad: float = 0.02) -> None:
