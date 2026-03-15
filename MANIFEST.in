@@ -1,2 +1,3 @@
 include src/lama_aesthetics/styles/*.mplstyle
-
+include src/lama_aesthetics/fonts/*.otf
+include src/lama_aesthetics/fonts/*.ttf

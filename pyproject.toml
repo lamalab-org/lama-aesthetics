@@ -39,12 +39,12 @@ dependencies = [
     "numpy",
     "scipy",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 readme = "README.md"
 license = { text = "MIT license" }
 
 [tool.setuptools.package-data]
-lama_aesthetics = ["styles/*.mplstyle"]
+lama_aesthetics = ["styles/*.mplstyle", "fonts/*.otf", "fonts/*.ttf"]
 
 [project.optional-dependencies]
 optional_dependencies = []
