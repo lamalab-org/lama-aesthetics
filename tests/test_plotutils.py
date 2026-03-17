@@ -27,6 +27,69 @@ def test_range_frame():
     assert ylim[0] <= y.min()
     assert ylim[1] >= y.max()
 
+    # Spines snap to nice tick bounds
+    x_spine = ax.spines["bottom"].get_bounds()
+    y_spine = ax.spines["left"].get_bounds()
+    assert x_spine[0] <= x.min()
+    assert x_spine[1] >= x.max()
+    assert y_spine[0] <= y.min()
+    assert y_spine[1] >= y.max()
+
+    # Pad (default 0.1) means the visible limits extend beyond the spine bounds
+    assert xlim[0] < x_spine[0]
+    assert xlim[1] > x_spine[1]
+    assert ylim[0] < y_spine[0]
+    assert ylim[1] > y_spine[1]
+
+    plt.close(fig)
+
+
+def test_range_frame_nice_true_with_pad():
+    """Test that pad is respected even when nice=True."""
+    fig, ax = plt.subplots()
+    x = np.array([1, 2, 3, 4, 5])
+    y = np.array([10, 20, 30, 40, 50])
+
+    range_frame(ax, x, y, pad=0.2, nice=True)
+
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+
+    # Spine bounds come from nice ticks
+    x_spine = ax.spines["bottom"].get_bounds()
+    y_spine = ax.spines["left"].get_bounds()
+
+    # Limits must extend beyond spine bounds by the pad fraction
+    x_range = x_spine[1] - x_spine[0]
+    y_range = y_spine[1] - y_spine[0]
+
+    assert abs(xlim[0] - (x_spine[0] - 0.2 * x_range)) < 1e-10
+    assert abs(xlim[1] - (x_spine[1] + 0.2 * x_range)) < 1e-10
+    assert abs(ylim[0] - (y_spine[0] - 0.2 * y_range)) < 1e-10
+    assert abs(ylim[1] - (y_spine[1] + 0.2 * y_range)) < 1e-10
+
+    plt.close(fig)
+
+
+def test_range_frame_nice_true_pad_zero():
+    """When pad=0 and nice=True, limits should equal the spine bounds exactly."""
+    fig, ax = plt.subplots()
+    x = np.array([1, 2, 3, 4, 5])
+    y = np.array([10, 20, 30, 40, 50])
+
+    range_frame(ax, x, y, pad=0.0, nice=True)
+
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+
+    x_spine = ax.spines["bottom"].get_bounds()
+    y_spine = ax.spines["left"].get_bounds()
+
+    assert abs(xlim[0] - x_spine[0]) < 1e-10
+    assert abs(xlim[1] - x_spine[1]) < 1e-10
+    assert abs(ylim[0] - y_spine[0]) < 1e-10
+    assert abs(ylim[1] - y_spine[1]) < 1e-10
+
     plt.close(fig)
 
 

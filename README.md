@@ -156,10 +156,10 @@ plt.show()
 |---|---|---|
 | `ax` | — | Matplotlib `Axes` object |
 | `x`, `y` | — | Data arrays (numeric or string/categorical) |
-| `pad` | `0.1` | Padding factor applied to both axes (only used when `nice=False`) |
+| `pad` | `0.1` | Padding factor applied to both axes. Expressed as a fraction of the spine range; the visible limits extend beyond the spine bounds by this amount. |
 | `pad_x` | `None` | Per-axis padding near the x-axis (vertical). Overrides `pad`. |
 | `pad_y` | `None` | Per-axis padding near the y-axis (horizontal). Overrides `pad`. |
-| `nice` | `True` | Snap numeric spine bounds to nice tick positions that bracket the data. When `True`, padding parameters are ignored for numeric axes. |
+| `nice` | `True` | Snap numeric spine bounds to nice tick positions that bracket the data. When `False`, spines span the raw data range instead. Padding is always applied regardless of this setting. |
 
 ### `ylabel_top` — horizontal y-label above the axis
 

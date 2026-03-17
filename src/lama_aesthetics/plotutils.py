@@ -24,10 +24,10 @@ def _get_axis_bounds(values):
 def _nice_tick_bounds(data_min, data_max):
     """Return nice tick positions and spine bounds that strictly bracket the data.
 
-    Uses matplotlib's ``MaxNLocator`` to compute tick positions for the
+    Uses matplotlib's `MaxNLocator` to compute tick positions for the
     data range and then selects the outermost ticks as spine bounds.
     The returned bounds are guaranteed to satisfy
-    ``bound_lo <= data_min`` and ``bound_hi >= data_max``, and every
+    `bound_lo <= data_min` and `bound_hi >= data_max`, and every
     tick between the bounds (inclusive) is included.
 
     Args:
@@ -35,8 +35,8 @@ def _nice_tick_bounds(data_min, data_max):
         data_max: Maximum value present in the data.
 
     Returns:
-        ``(bound_lo, bound_hi, ticks)`` where *ticks* is a 1-D array of
-        the tick positions that fall within ``[bound_lo, bound_hi]``.
+        `(bound_lo, bound_hi, ticks)` where *ticks* is a 1-D array of
+        the tick positions that fall within `[bound_lo, bound_hi]`.
     """
     if data_min == data_max:
         # Degenerate case — expand symmetrically so the locator has a range.
@@ -67,26 +67,32 @@ def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None, nice=True):
     `pad` times the range of the data. This is useful to ensure that the data
     points are not cut off by the axes.
 
-    Per-axis padding can be controlled with ``pad_x`` and ``pad_y``.  When
-    either is *None* (the default) the value of ``pad`` is used instead.
+    Per-axis padding can be controlled with `pad_x` and `pad_y`.  When
+    either is *None* (the default) the value of `pad` is used instead.
 
-    When ``nice`` is *True* (the default) and the axis carries numerical
+    When `nice` is *True* (the default) and the axis carries numerical
     data, the spine bounds are snapped to nice tick positions that bracket
     the data, so that the axis line starts and ends exactly at tick marks.
-    Tick positions are computed via matplotlib's ``MaxNLocator`` and
+    Tick positions are computed via matplotlib's `MaxNLocator` and
     explicitly set on the axes so there is no drift between ticks and
-    spine endpoints.  The ``pad`` / ``pad_x`` / ``pad_y`` parameters are
-    ignored for any axis that receives nice bounds.
+    spine endpoints.  When `nice` is *False*, the spines span the raw
+    data range instead.
+
+    Regardless of `nice`, the `pad` / `pad_x` / `pad_y` parameters
+    control how far the visible axis limits extend beyond the spine bounds,
+    giving data points breathing room from the spine edges.
 
     Args:
         ax: The axes object.
         x: The x-coordinates of the data points.
         y: The y-coordinates of the data points.
-        pad: The default padding factor applied to both axes.
-        pad_x: Padding near the x-axis (vertical direction). Overrides ``pad`` when set.
-        pad_y: Padding near the y-axis (horizontal direction). Overrides ``pad`` when set.
+        pad: The default padding factor applied to both axes.  Expressed as
+            a fraction of the spine range.
+        pad_x: Padding near the x-axis (vertical direction). Overrides `pad` when set.
+        pad_y: Padding near the y-axis (horizontal direction). Overrides `pad` when set.
         nice: If *True* (default), snap numeric spine bounds to nice tick
-            positions that bracket the data.
+            positions that bracket the data.  If *False*, spines span the
+            raw data range.
     """
     if pad_x is None:
         pad_x = pad
@@ -101,11 +107,11 @@ def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None, nice=True):
         if nice:
             y_bound_min, y_bound_max, y_ticks = _nice_tick_bounds(y_min, y_max)
             ax.set_yticks(y_ticks)
-            ax.set_ylim(y_bound_min, y_bound_max)
         else:
             y_bound_min = y_min
             y_bound_max = y_max
-            ax.set_ylim(y_min - pad_x * (y_max - y_min), y_max + pad_x * (y_max - y_min))
+        y_range = y_bound_max - y_bound_min
+        ax.set_ylim(y_bound_min - pad_x * y_range, y_bound_max + pad_x * y_range)
     else:
         y_bound_min, y_bound_max = y_min, y_max
         ax.set_ylim(y_min, y_max)
@@ -115,11 +121,11 @@ def range_frame(ax, x, y, pad=0.1, pad_x=None, pad_y=None, nice=True):
         if nice:
             x_bound_min, x_bound_max, x_ticks = _nice_tick_bounds(x_min, x_max)
             ax.set_xticks(x_ticks)
-            ax.set_xlim(x_bound_min, x_bound_max)
         else:
             x_bound_min = x_min
             x_bound_max = x_max
-            ax.set_xlim(x_min - pad_y * (x_max - x_min), x_max + pad_y * (x_max - x_min))
+        x_range = x_bound_max - x_bound_min
+        ax.set_xlim(x_bound_min - pad_y * x_range, x_bound_max + pad_y * x_range)
     else:
         x_bound_min, x_bound_max = x_min, x_max
         ax.set_xlim(x_min, x_max)
@@ -321,17 +327,17 @@ def decompose_figure(
     bar group, fill, …) together with the same axis labels, limits, and
     title as the original.  Only artists that carry a label (and would
     therefore appear in a legend) are considered; artists whose label
-    starts with ``_`` are skipped, following the matplotlib convention.
+    starts with `_` are skipped, following the matplotlib convention.
 
     Args:
         fig_or_ax: A :class:`~matplotlib.figure.Figure` or a single
             :class:`~matplotlib.axes.Axes` instance.  When a *Figure*
-            is given the first ``Axes`` is used.
+            is given the first `Axes` is used.
         show_legend: If *True* (default) a legend is added to every
             decomposed figure.
 
     Returns:
-        A list of ``(label, figure)`` tuples where *label* is the
+        A list of `(label, figure)` tuples where *label* is the
         legend text associated with the artist and *figure* is a new
         :class:`~matplotlib.figure.Figure` containing only that artist.
 
